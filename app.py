@@ -1,5 +1,4 @@
 import streamlit as st
-import ollama
 from PIL import Image
 import io
 import pybase64
