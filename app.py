@@ -129,7 +129,7 @@ with st.sidebar:
     n = 1
     # Botão para extrair texto
       
-if st.button("Extract Text 🔍", type="primary"):
+if st.button("Extract Text 🔍", type="primary") and lidos > 0:
     with st.spinner("Processando imagens..."):
         for img_nome in uploaded_files:
             st.write(f'{n} de {lidos}')
@@ -243,7 +243,7 @@ if st.button("Extract Text 🔍", type="primary"):
     # Processamento adicional dos preços
       df['Gasto'] = df['Preço (R$)'].str.replace('R$', '', regex=False).str.replace(',', '.', regex=False).str.strip().astype(float)
       df['Preço (R$)'] = df['Preço (R$)'].str.replace('R$', '', regex=False)
-#df['Preço (R$)'] = round(df['Preço (R$)'], 2)
+    #df['Preço (R$)'] = round(df['Preço (R$)'], 2)
     
     # Exibe a tabela final
       st.write(" 😃 😃 😃 😃 😃 😃 😃 😃 😃 😃 😃 😃")
