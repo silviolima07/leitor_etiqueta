@@ -73,15 +73,15 @@ img.save(image_path)
 # Getting the base64 string
 base64_image = encode_image(image_path)
 # Usando HTML para centralizar a imagem
-st.sidebar.markdown(
+st.markdown(
         f"""
         <div style="display: flex; justify-content: center;">
-            <img src="data:image/png;base64,{base64_image}" alt="Imagem" style="width: auto; height: auto;">
+            <img src="data:image/png;base64,{base64_image}" alt="Imagem" style="width: 50%; height: auto;">
         </div>
         """,
         unsafe_allow_html=True
     )
-
+    
 html_page_title = """
 <div style="background-color:black;padding=60px">
         <p style='text-align:center;font-size:50px;font-weight:bold; color:red'>Leitor de Etiquetas de Preço</p>
@@ -113,7 +113,7 @@ html_page_logo = """
         <p style='text-align:center;font-size:20px;font-weight:bold; color:white'>Etiquetas nas prateleiras</p>
 </div>
 """               
-st.sidebar.markdown(html_page_logo, unsafe_allow_html=True)
+st.markdown(html_page_logo, unsafe_allow_html=True)
 
 uploaded_files = st.file_uploader(
         "Selecione as imagens",
