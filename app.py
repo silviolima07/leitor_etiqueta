@@ -254,7 +254,7 @@ if st.button("Extract Text 🔍", type="primary") and lidos > 0:
       st.dataframe(df[colunas],hide_index = True )    
       total_itens = str(df.shape[0])
       total_gasto = str(df['Gasto'].sum().round(2))
-  #st.markdown(f"### Total de itens: {total_itens} \tGasto: R$ {total_gasto}")
+      st.markdown(f"### Total de itens: {total_itens}")
       st.markdown("### Gasto: R$ " + total_gasto)
     
 else:
