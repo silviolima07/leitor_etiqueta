@@ -129,7 +129,7 @@ with st.sidebar:
     n = 1
     # Botão para extrair texto
       
-if st.sidebar.button("Extract Text 🔍", type="primary"):
+if st.button("Extract Text 🔍", type="primary"):
     with st.spinner("Processando imagens..."):
         for img_nome in uploaded_files:
             st.write(f'{n} de {lidos}')
