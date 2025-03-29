@@ -128,22 +128,22 @@ with st.sidebar:
     st.subheader(f"{lidos} etiquetas")
     n = 1
     # Botão para extrair texto
-    if st.button("Extract Text 🔍", type="primary"):
-        with st.spinner("Processando imagens..."):
-            for img_nome in uploaded_files:
-                st.write(f'{n} de {lidos}')
-                st.write(f"Processando: {img_nome.name}")
-                try:
-                    # Salva a imagem temporariamente
-                    image = Image.open(img_nome)
-                    image_path = f"temp_{img_nome.name}"
-                    image.save(image_path)
+      
+if st.sidebar.button("Extract Text 🔍", type="primary"):
+    with st.spinner("Processando imagens..."):
+        for img_nome in uploaded_files:
+            st.write(f'{n} de {lidos}')
+            st.write(f"Processando: {img_nome.name}")
+            try:
+                # Salva a imagem temporariamente
+                image = Image.open(img_nome)
+                image_path = f"temp_{img_nome.name}"
+                image.save(image_path)
 
-                    # Codifica a imagem em base64
-                    base64_image = encode_image(image_path)
-
-                    # Prompt para extrair informações
-                    prompt = ("""         
+                # Codifica a imagem em base64
+                base64_image = encode_image(image_path)
+                # Prompt para extrair informações
+                prompt = ("""         
                         You are an expert assistant in recognizing and describing images with precision.
                         Dont anwer steps done to extract product name and price. Only final answer accordint to template.
                         Extract product names, prices in image.
@@ -159,79 +159,103 @@ with st.sidebar:
                         Preço: preço do produto
                     """)
 
-                    # Chama a função para processar a imagem
-                    descricao = image_to_text(llama_mm, base64_image, prompt)
+                # Chama a função para processar a imagem
+                descricao = image_to_text(llama_mm, base64_image, prompt)
 
-                    # Extrai o produto e o preço da descrição
-                    try:
-                        texto = descricao
-                        lista_etiqueta.append(texto)
-                        lista_imagem.append(f'{img_nome.name}')
-                        n = n + 1
-                    except Exception as e:
-                        st.error(f"Erro ao processar a descrição: {e}")
-
-                    # Remove a imagem temporária
-                    os.remove(image_path)
-
+                # Extrai o produto e o preço da descrição
+                try:
+                    texto = descricao
+                    #st.write(texto)
+                    lines = texto.replace("**", "").split("\n")
+                    #st.write(lines)
+                    #st.write(lines[0])
+                    #st.write(lines[1])
+                       
+                    # Extrai o nome do produto
+                    produto = lines[0].split("Produto:")[1].strip().replace("**", "")
+                    preco   = lines[1].split("Preço:")[1].strip().replace("**", "")
+                    st.write(" 🔍 Produto: " + produto)
+                    st.write(" 🔍 Preço: " + preco)
+                    lista_produto.append(produto)
+                    lista_preco.append(preco)
+                    #st.write(lista_produto)
+                    #st.write(lista_preco)
+                        
+                        
+                    lista_etiqueta.append(texto)
+                    lista_imagem.append(f'{img_nome.name}')
+                    data = {'Imagem': lista_imagem, 'Produto': lista_produto,
+                     'Preço (R$)': lista_preco}
+                    df = pd.DataFrame(data)
+                    #st.table(df)
+                    n = n + 1
                 except Exception as e:
-                    st.error(f"Erro ao processar a imagem {img_nome.name}: {str(e)}")
+                    st.error(f"Erro ao processar a descrição: {e}")
 
-# Exibe os resultados
-if len(lista_etiqueta) > 0:
+                # Remove a imagem temporária
+                os.remove(image_path)
+
+            except Exception as e:
+                st.error(f"Erro ao processar a imagem {img_nome.name}: {str(e)}")
+
+    # Exibe os resultados
+    if len(df) > 0:
     #st.write('Imagens:', lista_imagem)
     #st.write('Etiquetas:', lista_etiqueta)
-    lidos = len(uploaded_files)
+    #lidos = len(uploaded_files)
     #st.subheader(f"Foram lidas {lidos} etiquetas")
 
     # Processamento da lista
-    produtos_unicos = set()  # Para garantir que os produtos sejam únicos
-    n = 1
-    for item in lista_etiqueta:
+    #produtos_unicos = set()  # Para garantir que os produtos sejam únicos
+    #n = 1
+    #for item in lista_etiqueta:
         # Remove caracteres extras (como **) e divide o item em linhas
-        lines = item.replace("**", "").split("\n")
+        #lines = item.replace("**", "").split("\n")
         
         #st.write(f"Itens {n}: {lines}")
         #n = n + 1
         # Extrai o nome do produto
-        produto = lines[0].split("Produto:")[1].strip()
+        #produto = lines[0].split("Produto:")[1].strip()
         # Pega apenas os dois primeiros termos do nome
         #produto = ' '.join(produto.split()[:2])
         
         # Extrai o preço
-        preco = lines[1].split("Preço:")[1].strip()
+        #preco = lines[1].split("Preço:")[1].strip()
         
         # Adiciona às listas apenas se o produto for único
-        if produto not in produtos_unicos:
-            produtos_unicos.add(produto)
-            lista_produto.append(produto)
-            lista_preco.append(preco)
+        #if produto not in produtos_unicos:
+        #    produtos_unicos.add(produto)
+        #    lista_produto.append(produto)
+        #    lista_preco.append(preco)
 
     # Cria o DataFrame
     #st.write("Lista produto:", len(lista_produto))
     #st.write("Lista preço:", len(lista_preco))
     #st.write("Lista imagem:", len(lista_imagem))
     
-    data = {'Imagem': lista_imagem, 'Produto': lista_produto,
-             'Preço (R$)': lista_preco}
-    df = pd.DataFrame(data)
+    #data = {'Imagem': lista_imagem, 'Produto': lista_produto,
+    #         'Preço (R$)': lista_preco}
+    #df = pd.DataFrame(data)
 
     # Exibe o DataFrame
     #st.dataframe(df)
 
     # Processamento adicional dos preços
-    df['Gasto'] = df['Preço (R$)'].str.replace('R$', '', regex=False).str.replace(',', '.', regex=False).str.strip().astype(float)
-    df['Preço (R$)'] = df['Preço (R$)'].str.replace('R$', '', regex=False)
-    #df['Preço (R$)'] = round(df['Preço (R$)'], 2)
+      df['Gasto'] = df['Preço (R$)'].str.replace('R$', '', regex=False).str.replace(',', '.', regex=False).str.strip().astype(float)
+      df['Preço (R$)'] = df['Preço (R$)'].str.replace('R$', '', regex=False)
+#df['Preço (R$)'] = round(df['Preço (R$)'], 2)
     
     # Exibe a tabela final
-    st.markdown("### Lista de Produtos e Preços")
-    colunas = ['Imagem', 'Produto', 'Preço (R$)']
-    st.table(df[colunas])    
-    total_itens = str(df.shape[0])
-    total_gasto = str(df['Gasto'].sum().round(2))
-    #st.markdown(f"### Total de itens: {total_itens} \tGasto: R$ {total_gasto}")
-    st.markdown("### Gasto: R$ " + total_gasto)
+      st.write(" 😃 😃 😃 😃 😃 😃 😃 😃 😃 😃 😃 😃")
+      
+      
+      st.markdown("### Lista de Produtos e Preços")
+      colunas = ['Imagem', 'Produto', 'Preço (R$)']
+      st.table(df[colunas])    
+      total_itens = str(df.shape[0])
+      total_gasto = str(df['Gasto'].sum().round(2))
+  #st.markdown(f"### Total de itens: {total_itens} \tGasto: R$ {total_gasto}")
+      st.markdown("### Gasto: R$ " + total_gasto)
     
 else:
     st.info("Faça upload das imagens e clique em 'Extract Text' para ver os resultados.")
