@@ -105,28 +105,36 @@ col1, col2 = st.columns([6, 1])
 #        st.rerun()
 
 # Barra lateral para upload de imagens
-with st.sidebar:
-    st.header("Etiquetas nas prateleiras")
-    uploaded_files = st.file_uploader(
+#with st.sidebar:
+#st.sidebar.header("Etiquetas nas prateleiras")
+
+html_page_logo = """
+<div style="background-color:black;padding=20px">
+        <p style='text-align:center;font-size:20px;font-weight:bold; color:white'>Etiquetas nas prateleiras</p>
+</div>
+"""               
+st.sidebar.markdown(html_page_logo, unsafe_allow_html=True)
+
+uploaded_files = st.file_uploader(
         "Selecione as imagens",
         type=["jpg", "jpeg", "png", "gif", "bmp"],  # Tipos de arquivo permitidos
         accept_multiple_files=True  # Permite upload de vários arquivos
     )
 
     # Verifica se arquivos foram carregados
-    if uploaded_files:
-        st.success(f"{len(uploaded_files)} imagem(ns) carregada(s) com sucesso!")
-    else:
-        st.warning("Nenhuma imagem carregada ainda.")
+if uploaded_files:
+    st.success(f"{len(uploaded_files)} imagem(ns) carregada(s) com sucesso!")
+else:
+    st.warning("Nenhuma imagem carregada ainda.")
 
-    # Exibe as imagens carregadas
-    for img_nome in uploaded_files:
-        image = Image.open(img_nome)
-        st.image(image, caption=img_nome.name, use_container_width=True)
+# Exibe as imagens carregadas
+for img_nome in uploaded_files:
+    image = Image.open(img_nome)
+    st.image(image, caption=img_nome.name, use_container_width=True)
     
-    lidos = len(uploaded_files)
-    st.subheader(f"{lidos} etiquetas")
-    n = 1
+lidos = len(uploaded_files)
+st.subheader(f"{lidos} etiquetas")
+n = 1
     # Botão para extrair texto
       
 if st.button("Extract Text 🔍", type="primary") and lidos > 0:
