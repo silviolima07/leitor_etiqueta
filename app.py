@@ -181,10 +181,11 @@ if st.button("Extract Text 🔍", type="primary") and lidos > 0:
                        
                     # Extrai o nome do produto
                     produto = lines[0].split("Produto:")[1].strip().replace("**", "")
+                    produto = produto.upper()
                     preco   = lines[1].split("Preço:")[1].strip().replace("**", "")
-                    st.write(" 🔍 Produto: " + produto)
-                    st.write(" 🔍 Preço: " + preco)
-                    lista_produto.append(produto.upper())
+                    st.write("\t🔍 Produto: " + produto)
+                    st.write(" \t🔍 Preço: " + preco)
+                    lista_produto.append(produto)
                     lista_preco.append(preco)
                     #st.write(lista_produto)
                     #st.write(lista_preco)
